@@ -48,6 +48,8 @@ Copy-Item (Join-Path $root 'lib\Microsoft.Web.WebView2.WinForms.dll') $outDir -F
 Copy-Item (Join-Path $root 'lib\WebView2Loader.dll') $outDir -Force
 Copy-Item (Join-Path $root 'assets\app.ico') $outDir -Force
 Copy-Item (Join-Path $root '使用说明.txt') $outDir -Force
+Copy-Item (Join-Path $root 'LICENSE') $outDir -Force
+Copy-Item (Join-Path $root 'THIRD_PARTY_NOTICES.md') $outDir -Force
 
 $vendorDest = Join-Path $outDir 'vendor'
 if (Test-Path $vendorDest) { Remove-Item $vendorDest -Recurse -Force }
