@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AssetNest 素材巢</title>
+<link rel="icon" href="/img/favicon.svg">
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-logo" viewBox="0 0 24 24"><path d="m12 3 8 4.6v8.8L12 21l-8-4.6V7.6z"/><path d="m4 7.6 8 4.6 8-4.6M12 12.2V21"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4-4"/></symbol>
+  <symbol id="i-caret" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7.2A1.7 1.7 0 0 1 4.7 5.5h4.2l2 2.4h8.4A1.7 1.7 0 0 1 21 9.6v8.2a1.7 1.7 0 0 1-1.7 1.7H4.7A1.7 1.7 0 0 1 3 17.8z"/></symbol>
+  <symbol id="i-project" viewBox="0 0 24 24"><rect x="3.2" y="3.2" width="7.4" height="7.4" rx="1.8"/><rect x="13.4" y="3.2" width="7.4" height="7.4" rx="1.8"/><rect x="3.2" y="13.4" width="7.4" height="7.4" rx="1.8"/><rect x="13.4" y="13.4" width="7.4" height="7.4" rx="1.8"/></symbol>
+  <symbol id="i-character" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.6"/><path d="M4.8 20.4c.6-3.7 3.5-5.7 7.2-5.7s6.6 2 7.2 5.7"/></symbol>
+  <symbol id="i-scene" viewBox="0 0 24 24"><rect x="3.2" y="4.6" width="17.6" height="14.8" rx="2.2"/><circle cx="8.6" cy="9.8" r="1.5"/><path d="m4.6 17.4 4.8-4.4 3.1 2.8 3-2.6 3.9 3.6"/></symbol>
+  <symbol id="i-prop" viewBox="0 0 24 24"><path d="M12 3.2 20 8v8l-8 4.8L4 16V8z"/><path d="m4 8 8 4.8L20 8M12 12.8v7"/></symbol>
+  <symbol id="i-audio" viewBox="0 0 24 24"><path d="M4 9v6M8 6v12M12 3.5v17M16 7v10M20 10v4"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5.4" width="12.6" height="13.2" rx="2.2"/><path d="m15.6 10.6 5.4-3v8.8l-5.4-3z"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path d="M6 3.4h8.3L19 8.2v12.4H6z"/><path d="M14 3.4v5h5M9 12h7M9 15.6h7M9 19h4"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="4.2" width="18" height="15.6" rx="2"/><path d="M7.4 4.2v15.6M16.6 4.2v15.6M3 9h4.4M3 15h4.4M16.6 9H21M16.6 15H21"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.4" y="3.4" width="7.2" height="7.2" rx="1.6"/><rect x="13.4" y="3.4" width="7.2" height="7.2" rx="1.6"/><rect x="3.4" y="13.4" width="7.2" height="7.2" rx="1.6"/><rect x="13.4" y="13.4" width="7.2" height="7.2" rx="1.6"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3.8 2.6 5.3 5.9.8-4.3 4.2 1 5.8-5.2-2.8-5.2 2.8 1-5.8L3.5 9.9l5.9-.8z"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20 13.4 13.4 20a2 2 0 0 1-2.8 0L3.9 13.3A2 2 0 0 1 3.3 12V5A1.7 1.7 0 0 1 5 3.3h7a2 2 0 0 1 1.4.6l6.6 6.6a2 2 0 0 1 0 2.9z"/><circle cx="7.8" cy="7.8" r="1.2"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V5.4A1.4 1.4 0 0 1 10.9 4h2.2a1.4 1.4 0 0 1 1.4 1.4V7"/><path d="m6.6 7 .8 11.9A1.5 1.5 0 0 0 8.9 20.4h6.2a1.5 1.5 0 0 0 1.5-1.5L17.4 7"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.6" y="8.6" width="11.8" height="11.8" rx="2"/><path d="M15.4 8.6v-2.8a2 2 0 0 0-2-2H5.4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3.2"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="m20 4-9 9"/><path d="M18 14.5V19a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V8a1.5 1.5 0 0 1 1.5-1.5H10"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.4v13.2L19 12z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.4 4.6 4.6L19 6.6"/></symbol>
+  <symbol id="i-import" viewBox="0 0 24 24"><path d="M12 3.6v10.8"/><path d="m7.4 10 4.6 4.4L16.6 10"/><path d="M4 16v2.6A1.4 1.4 0 0 0 5.4 20h13.2a1.4 1.4 0 0 0 1.4-1.4V16"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M19.3 14.6a1.6 1.6 0 0 0 .3 1.8l.1.1a1.9 1.9 0 1 1-2.7 2.7l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.5 1.5 0 0 0-.9 1.4V21a1.9 1.9 0 1 1-3.8 0v-.1a1.5 1.5 0 0 0-1-1.4 1.6 1.6 0 0 0-1.7.3l-.1.1a1.9 1.9 0 1 1-2.7-2.7l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.5 1.5 0 0 0-1.4-.9H3a1.9 1.9 0 1 1 0-3.8h.1a1.5 1.5 0 0 0 1.4-1 1.6 1.6 0 0 0-.3-1.7l-.1-.1a1.9 1.9 0 1 1 2.7-2.7l.1.1a1.6 1.6 0 0 0 1.7.3H9a1.5 1.5 0 0 0 .9-1.4V3a1.9 1.9 0 1 1 3.8 0v.1a1.5 1.5 0 0 0 .9 1.4 1.6 1.6 0 0 0 1.8-.3l.1-.1a1.9 1.9 0 1 1 2.7 2.7l-.1.1a1.6 1.6 0 0 0-.3 1.7V9a1.5 1.5 0 0 0 1.4.9H21a1.9 1.9 0 1 1 0 3.8h-.1a1.5 1.5 0 0 0-1.4.9z"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.7-6"/><path d="M20 4.4V10h-5.4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.4" y="4.6" width="17.2" height="14.8" rx="2.2"/><circle cx="9" cy="10" r="1.6"/><path d="m4.6 17.6 4.8-4.4 3.2 3 2.8-2.4 4.2 3.8"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.4h8.2L19 8.2v12.4H6z"/><path d="M14 3.4v5h5"/></symbol>
+  <symbol id="i-sort" viewBox="0 0 24 24"><path d="M7 4.5v15M3.6 16l3.4 3.5L10.4 16"/><path d="M14 6h6.4M14 11h5M14 16h3.6"/></symbol>
+  <symbol id="i-maximize" viewBox="0 0 24 24"><path d="M4 9V4.6h5M20 9V4.6h-5M4 15v4.4h5M20 15v4.4h-5"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 20.6a8.6 8.6 0 1 1 8.6-8.6c0 2.3-1.9 3.3-3.7 3.3h-1.3a2.1 2.1 0 0 0-1.6 3.4c.6.8.1 1.9-2 1.9z"/><circle cx="8.2" cy="10.2" r="1.2"/><circle cx="12" cy="7.6" r="1.2"/><circle cx="15.8" cy="10.2" r="1.2"/></symbol>
+</svg>
+
+<div class="app">
+  <aside class="rail">
+    <div class="brand">
+      <div class="logo"><svg><use href="#i-logo"/></svg></div>
+      <div class="brand-t"><b>AssetNest</b><span>素材巢 · AICG 项目资产库</span></div>
+    </div>
+
+    <div class="project-card" id="projectCard">
+      <div class="pc-icon"><svg><use href="#i-project"/></svg></div>
+      <div class="pc-body">
+        <b id="projectName">未打开项目</b>
+        <span id="projectPath">选择一个项目文件夹开始</span>
+      </div>
+      <button class="pc-btn" id="btnSwitch" title="切换项目">切换</button>
+    </div>
+
+    <div class="tree" id="tree"></div>
+
+    <div class="tree-add-wrap">
+      <button class="tree-add" id="btnNewFolder" title="在当前位置新建文件夹（Ctrl+Shift+N）">
+        <svg><use href="#i-plus"/></svg><span>新建文件夹</span>
+      </button>
+    </div>
+
+    <div class="rail-foot">
+      <button class="rail-btn primary" id="btnImport"><svg><use href="#i-import"/></svg>导入素材</button>
+      <button class="rail-btn" id="btnExport"><svg><use href="#i-file"/></svg>导出清单</button>
+      <div class="rail-row">
+        <button class="icon-btn" id="btnSettings" title="设置"><svg><use href="#i-gear"/></svg></button>
+        <button class="icon-btn" id="btnReload" title="刷新 (R)"><svg><use href="#i-refresh"/></svg></button>
+        <button class="icon-btn danger" id="btnQuit" title="退出程序"><svg><use href="#i-close"/></svg></button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="toolbar">
+      <div class="crumbs" id="crumbs"></div>
+      <div class="searchbox">
+        <svg class="s-ico"><use href="#i-search"/></svg>
+        <input id="search" placeholder="搜索当前文件夹…" autocomplete="off" spellcheck="false">
+        <kbd>/</kbd>
+      </div>
+      <div class="tool-right">
+        <div class="seg" id="kindSeg">
+          <button data-kind="" class="on" title="全部类型">全部</button>
+          <button data-kind="image" title="图片"><svg><use href="#i-image"/></svg></button>
+          <button data-kind="video" title="视频"><svg><use href="#i-video"/></svg></button>
+          <button data-kind="audio" title="音频"><svg><use href="#i-audio"/></svg></button>
+          <button data-kind="text" title="文本"><svg><use href="#i-text"/></svg></button>
+        </div>
+        <label class="toggle" title="包含子文件夹">
+          <input type="checkbox" id="recursive"><span>含子目录</span>
+        </label>
+        <div class="select-wrap">
+          <svg class="chev"><use href="#i-sort"/></svg>
+          <select id="sort">
+            <option value="name_asc">名称 A→Z</option>
+            <option value="mtime_desc">最新优先</option>
+            <option value="mtime_asc">最早优先</option>
+            <option value="size_desc">体积从大到小</option>
+            <option value="kind">按类型</option>
+          </select>
+        </div>
+        <input type="range" id="tileRange" min="150" max="360" step="10" value="220" title="缩略图大小">
+        <div class="viewtoggle">
+          <button data-view="grid" class="on" title="网格视图"><svg><use href="#i-grid"/></svg></button>
+          <button data-view="list" title="列表视图"><svg><use href="#i-list"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="work">
+      <div class="content" id="content">
+      <div class="welcome" id="welcome" hidden>
+        <div class="w-card">
+          <div class="w-logo"><svg><use href="#i-logo"/></svg></div>
+          <h1>把一部片子的资产，收进一个巢</h1>
+          <p>AssetNest 按「剧本 · 人物 · 场景 · 道具 · 音频 · 视频 · 成片」组织项目文件。选中文件夹即可预览，拖拽文件即导入，双击直接用系统程序打开。</p>
+          <div class="w-actions">
+            <button class="btn primary lg" id="wOpen">打开 / 新建项目文件夹</button>
+            <button class="btn lg" id="wDemo">看看示例项目</button>
+          </div>
+          <div class="w-recent" id="wRecent"></div>
+          <ul class="w-features">
+            <li><b>分门别类</b><span>七个固定分类，自动创建，导入时自动归位</span></li>
+            <li><b>一眼预览</b><span>图片直出，视频抽首帧，音频画波形</span></li>
+            <li><b>顺手操作</b><span>双击打开、右键复制路径、拖拽导入</span></li>
+            <li><b>生成参数</b><span>自动读取 SD WebUI / ComfyUI 提示词与模型</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rows" id="rows" hidden></div>
+      <div class="empty" id="empty" hidden>
+        <div class="empty-ico"><svg><use href="#i-image"/></svg></div>
+        <h3>这里还是空的</h3>
+        <p id="emptyHint">把文件拖到窗口里，就能导入到当前分类。</p>
+        <button class="btn" id="emptyImport">选择文件导入</button>
+      </div>
+
+      <div class="view-list" id="listView" hidden>
+        <div class="lv-head">
+          <span class="lv-c1">名称</span><span class="lv-c2">类型</span><span class="lv-c3">大小</span>
+          <span class="lv-c4">尺寸 / 时长</span><span class="lv-c5">修改时间</span><span class="lv-c6">标签</span>
+        </div>
+        <div class="lv-body" id="lvBody"></div>
+      </div>
+    </div>
+
+      <aside class="dock" id="dock" hidden></aside>
+    </div>
+
+    <footer class="statusbar">
+      <span id="stLeft">—</span>
+      <span class="grow"></span>
+      <span id="stSel"></span>
+      <span id="stHint"><kbd>双击</kbd>打开 <kbd>空格</kbd>预览 <kbd>右击</kbd>更多</span>
+    </footer>
+  </main>
+</div>
+
+<div class="dropmask" id="dropmask">
+  <div class="dm-pill">
+    <span class="dm-ico"><svg><use href="#i-import"/></svg></span>
+    <b id="dmVerb">松开以导入</b>
+    <span id="dmTarget">将导入到当前文件夹</span>
+  </div>
+</div>
+
+<div class="transfer" id="transfer" hidden>
+  <div class="tr-head">
+    <b id="trTitle">正在导入…</b>
+    <button class="icon-btn tiny" id="trClose"><svg><use href="#i-close"/></svg></button>
+  </div>
+  <div class="tr-bar"><i id="trFill"></i></div>
+  <div class="tr-meta" id="trMeta"></div>
+  <div class="tr-list" id="trList"></div>
+</div>
+
+<div class="lightbox" id="lightbox" hidden>
+  <div class="lb-bar">
+    <div class="lb-name" id="lbName"></div>
+    <div class="lb-tools">
+      <button class="icon-btn" id="lbReveal" title="在资源管理器中显示"><svg><use href="#i-folder"/></svg></button>
+      <button class="icon-btn" id="lbCopy" title="复制路径"><svg><use href="#i-copy"/></svg></button>
+      <button class="icon-btn" id="lbClose" title="关闭 (Esc)"><svg><use href="#i-close"/></svg></button>
+    </div>
+  </div>
+  <button class="lb-nav prev" id="lbPrev"><svg><use href="#i-arrow-left"/></svg></button>
+  <div class="lb-stage" id="lbStage"></div>
+  <button class="lb-nav next" id="lbNext"><svg><use href="#i-arrow-right"/></svg></button>
+  <div class="lb-foot" id="lbFoot"></div>
+</div>
+
+<div class="ctxmenu" id="ctxmenu" hidden></div>
+<div class="modal-root" id="modals"></div>
+<div class="toasts" id="toasts"></div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

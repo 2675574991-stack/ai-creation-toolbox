@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 创作工具箱</title>
+<style>
+  :root{
+    --bg:#070b12;
+    --side:#0a1120;
+    --side-2:#0d1730;
+    --line:rgba(126,156,210,.13);
+    --line-strong:rgba(126,156,210,.22);
+    --text:#e9effa;
+    --muted:#8090aa;
+    --muted-2:#5c6b84;
+    --accent:#4f8cff;
+    --accent-2:#8b5cf6;
+    --ok:#35d39a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Segoe UI",sans-serif;
+    font-size:13px;display:flex;
+    -webkit-font-smoothing:antialiased;user-select:none;
+  }
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  iframe{border:0;display:block;width:100%;height:100%;background:var(--bg)}
+
+  /* ---------- 侧栏 ---------- */
+  .side{
+    width:246px;flex:0 0 246px;height:100%;
+    background:
+      radial-gradient(560px 240px at -30% -10%,rgba(79,140,255,.16),transparent 70%),
+      linear-gradient(180deg,#0b1324 0%,#080e1a 100%);
+    border-right:1px solid var(--line);
+    display:flex;flex-direction:column;
+    position:relative;z-index:2;
+  }
+  .brand{
+    display:flex;align-items:center;gap:11px;
+    padding:18px 16px 16px;
+  }
+  .logo{
+    width:38px;height:38px;flex:0 0 38px;border-radius:11px;
+    background:linear-gradient(140deg,#4f8cff,#8b5cf6 70%);
+    display:grid;place-items:center;
+    box-shadow:0 6px 18px rgba(79,140,255,.32),inset 0 1px 0 rgba(255,255,255,.28);
+  }
+  .logo svg{width:21px;height:21px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .brand-title{font-size:15px;font-weight:700;letter-spacing:.2px;line-height:1.3}
+  .brand-sub{font-size:10.5px;color:var(--muted-2);letter-spacing:.34px;margin-top:2px}
+
+  .section-label{
+    padding:10px 18px 7px;font-size:10.5px;letter-spacing:1.1px;
+    color:var(--muted-2);text-transform:uppercase;font-weight:600;
+  }
+  .order-hint{
+    float:right;border:0;background:none;padding:0;font:inherit;
+    font-size:9px;letter-spacing:.2px;color:#5a6f92;text-transform:none;
+    font-weight:400;cursor:pointer;transition:color .15s;
+  }
+  .order-hint:hover{color:#a9c5f2}
+  nav{display:flex;flex-direction:column;gap:4px;padding:0 9px}
+
+  .nav-item{
+    position:relative;display:flex;align-items:center;gap:10px;
+    padding:10px 10px 10px 11px;border-radius:9px;text-align:left;
+    border:1px solid transparent;
+    transition:background .16s,border-color .16s,transform .16s;
+  }
+  .nav-item:hover{background:rgba(255,255,255,.035);border-color:rgba(126,156,210,.1)}
+  .nav-item.active{
+    background:linear-gradient(90deg,rgba(79,140,255,.19),rgba(79,140,255,.06));
+    border-color:rgba(79,140,255,.3);
+  }
+  .nav-item.active:before{
+    content:"";position:absolute;left:-9px;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;
+    background:linear-gradient(180deg,#5b96ff,#8b5cf6);
+    box-shadow:0 0 10px rgba(79,140,255,.6);
+  }
+  .ico{
+    width:31px;height:31px;flex:0 0 31px;border-radius:8px;
+    display:grid;place-items:center;
+    background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.055);
+    color:#93b4f2;transition:all .16s;
+  }
+  .ico svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .nav-item.active .ico{background:rgba(79,140,255,.17);border-color:rgba(79,140,255,.34);color:#bcd4ff}
+  .nav-text{min-width:0;flex:1;display:flex;flex-direction:column;gap:1px}
+  .nav-title{font-size:12.5px;font-weight:600;color:#dce7f8;letter-spacing:.1px}
+  .nav-sub{font-size:10.5px;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .nav-item.active .nav-sub{color:#7d99c9}
+  .nav-arrow{color:var(--muted-2);font-size:15px;opacity:0;transform:translateX(-3px);transition:all .16s}
+  .nav-item.active .nav-arrow,.nav-item:hover .nav-arrow{opacity:1;transform:none}
+  .nav-item[draggable="true"]{cursor:grab}
+  .nav-item.dragging{opacity:.35}
+  .nav-item.drop-before{box-shadow:inset 0 2px 0 var(--accent)}
+  .nav-item.drop-after{box-shadow:inset 0 -2px 0 var(--accent)}
+
+  .side-foot{
+    margin-top:auto;padding:14px 16px 15px;border-top:1px solid var(--line);
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .local-pill{
+    display:inline-flex;align-items:center;gap:6px;align-self:flex-start;
+    font-size:10.5px;color:#8fd7bd;background:rgba(53,211,154,.08);
+    border:1px solid rgba(53,211,154,.18);border-radius:20px;padding:3px 9px;
+  }
+  .dot{width:5px;height:5px;border-radius:50%;background:var(--ok);box-shadow:0 0 7px rgba(53,211,154,.9)}
+  .ver{font-size:10px;color:var(--muted-2);letter-spacing:.25px}
+
+  /* 素材巢激活时收起侧栏，给 AssetNest 自己的文件树留空间 */
+  .side{transition:width .2s ease,flex-basis .2s ease}
+  .side.rail{width:64px;flex-basis:64px}
+  .side.rail .brand{justify-content:center;padding:18px 0}
+  .side.rail .brand > div:last-child{display:none}
+  .side.rail .logo{width:34px;height:34px;flex-basis:34px}
+  .side.rail .section-label,
+  .side.rail .nav-text,
+  .side.rail .nav-arrow,
+  .side.rail .side-foot{display:none}
+  .side.rail nav{padding:0 8px;gap:6px}
+  .side.rail .nav-item{justify-content:center;padding:11px 0}
+  .side.rail .nav-item.active:before{left:-8px}
+
+  /* 素材巢启动/停止状态层 */
+  .an-state{
+    position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:11px;text-align:center;padding:24px;
+    background:
+      radial-gradient(600px 300px at 50% 20%,rgba(79,140,255,.12),transparent 70%),
+      #070b12;
+  }
+  .an-state.hide{display:none}
+  .an-title{font-size:14px;font-weight:700;color:#dce8fb;letter-spacing:.2px}
+  .an-sub{font-size:11px;color:var(--muted-2);line-height:1.65;max-width:440px;white-space:pre-line}
+  .an-btn{
+    margin-top:4px;height:34px;padding:0 18px;border-radius:8px;font-size:12px;font-weight:600;
+    color:#fff;background:linear-gradient(135deg,#3f7ff0,#6d5cf6);
+    border:1px solid rgba(120,150,255,.5);box-shadow:0 6px 18px rgba(63,127,240,.22);
+  }
+  .an-btn:hover{filter:brightness(1.08)}
+  .an-btn[hidden]{display:none}
+
+  /* 素材巢收起侧栏时，底部保留一个“排序”入口 */
+  .rail-order{
+    display:none;width:38px;height:38px;margin:12px auto 14px;border-radius:10px;
+    border:1px solid rgba(126,156,210,.18);background:rgba(255,255,255,.04);
+    color:#93a9ca;place-items:center;
+  }
+  .rail-order:hover{background:rgba(79,140,255,.16);border-color:rgba(79,140,255,.4);color:#cfdefa}
+  .rail-order svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .side.rail .rail-order{display:grid;margin-top:auto}
+
+  /* 自定义工具顺序弹窗 */
+  .order-modal{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:24px}
+  .order-modal[hidden]{display:none}
+  .order-backdrop{position:absolute;inset:0;background:rgba(2,6,12,.68);backdrop-filter:blur(4px)}
+  .order-card{
+    position:relative;width:478px;max-width:100%;max-height:100%;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,#111d31,#0a1322);
+    border:1px solid rgba(126,156,210,.28);border-radius:16px;
+    box-shadow:0 26px 80px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.06);
+    overflow:hidden;
+  }
+  .order-head{display:flex;align-items:flex-start;gap:12px;padding:18px 20px 14px;border-bottom:1px solid var(--line)}
+  .order-title{font-size:15px;font-weight:700;color:#e6effc;letter-spacing:.2px}
+  .order-sub{font-size:10.5px;color:#6f82a2;line-height:1.55;margin-top:4px}
+  .order-close{
+    margin-left:auto;width:30px;height:30px;flex:0 0 30px;border-radius:8px;
+    color:#8d9cb6;font-size:19px;line-height:1;
+  }
+  .order-close:hover{background:rgba(255,255,255,.07);color:#fff}
+  .order-list{padding:14px 16px;overflow:auto;display:flex;flex-direction:column;gap:7px}
+  .order-row{
+    display:flex;align-items:center;gap:9px;padding:8px 10px;
+    border:1px solid rgba(126,156,210,.14);border-radius:10px;
+    background:rgba(255,255,255,.025);
+  }
+  .order-row .grip{color:#3e4f6c;font-size:13px;letter-spacing:-2px;width:10px;flex:0 0 10px}
+  .order-row .num{width:16px;flex:0 0 16px;text-align:center;font-size:9.5px;color:#617697;font-variant-numeric:tabular-nums}
+  .order-row .ico{width:28px;height:28px;flex:0 0 28px;border-radius:7px}
+  .order-row .ico svg{width:15px;height:15px}
+  .order-row .info{flex:1;min-width:0}
+  .order-row .info b{display:block;font-size:12px;font-weight:600;color:#dce7f8}
+  .order-row .info small{display:block;font-size:9.5px;color:#667892;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+  .order-row .move{
+    width:27px;height:27px;flex:0 0 27px;border-radius:7px;
+    border:1px solid rgba(126,156,210,.2);background:rgba(255,255,255,.04);
+    color:#bacbe4;font-size:13px;line-height:1;
+  }
+  .order-row .move:hover:not(:disabled){background:rgba(79,140,255,.2);border-color:rgba(79,140,255,.48);color:#fff}
+  .order-row .move:disabled{opacity:.22;cursor:not-allowed}
+  .order-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px 14px;border-top:1px solid var(--line)}
+  .order-foot-right{display:flex;gap:8px}
+  .order-btn{
+    height:34px;padding:0 16px;border-radius:8px;font-size:11.5px;
+    border:1px solid rgba(126,156,210,.24);background:rgba(255,255,255,.04);color:#d6e3f6;
+  }
+  .order-btn:hover{background:rgba(255,255,255,.07);border-color:rgba(126,156,210,.45)}
+  .order-btn.primary{
+    background:linear-gradient(135deg,#3f7ff0,#6d5cf6);border-color:rgba(120,150,255,.5);
+    color:#fff;font-weight:600;box-shadow:0 6px 18px rgba(63,127,240,.24);
+  }
+  .order-btn.primary:hover{filter:brightness(1.08)}
+
+
+  /* ---------- 主区 ---------- */
+  .stage{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;background:var(--bg)}
+  .stage-bar{
+    height:46px;flex:0 0 46px;display:flex;align-items:center;gap:10px;
+    padding:0 16px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#0b1322,#080e19);
+  }
+  .stage-title{display:flex;align-items:baseline;gap:8px;min-width:0}
+  .stage-name{font-size:12.5px;font-weight:700;letter-spacing:.2px;color:#dbe8ff}
+  .stage-sep{color:#32415c;font-size:11px}
+  .stage-sub{font-size:11px;color:var(--muted);white-space:nowrap}
+  .stage-tip{
+    margin-left:auto;font-size:10.5px;color:var(--muted-2);
+    padding:4px 10px;border:1px solid var(--line);border-radius:20px;
+    background:rgba(255,255,255,.018);white-space:nowrap;
+  }
+  .frame-wrap{position:relative;flex:1;min-height:0;background:var(--bg)}
+  .pane{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .18s ease}
+  .pane.active{opacity:1;visibility:visible}
+  .pane iframe{width:100%;height:100%}
+
+  .loading{
+    position:absolute;inset:0;display:grid;place-items:center;z-index:3;
+    background:#070b12;color:var(--muted);font-size:12px;gap:10px;
+    pointer-events:none;transition:opacity .25s;
+  }
+  .loading.hide{opacity:0}
+  .spin{width:26px;height:26px;border-radius:50%;border:2px solid #1c2b47;border-top-color:var(--accent);animation:sp 1s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  @media (max-width:980px){
+    .side{width:212px;flex-basis:212px}
+    .brand-sub,.stage-tip{display:none}
+  }
+</style>
+</head>
+<body>
+<aside class="side">
+  <div class="brand">
+    <div class="logo">
+      <svg viewBox="0 0 24 24"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5z"/><path d="M12 12v9"/><path d="m4 7.5 8 4.5 8-4.5"/></svg>
+    </div>
+    <div>
+      <div class="brand-title">AI 创作工具箱</div>
+      <div class="brand-sub">PROMPT &amp; COLOR SUITE</div>
+    </div>
+  </div>
+
+  <div class="section-label">创作工具<button class="order-hint" id="btnOrder" title="自定义工具顺序">自定义顺序</button></div>
+  <nav>
+    <button class="nav-item" data-module="assetnest" title="素材巢">
+      <span class="ico"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M8 12h8M8 16h5"/></svg></span>
+      <span class="nav-text">
+        <span class="nav-title">素材巢</span>
+        <span class="nav-sub">AssetNest · 项目素材资产管理</span>
+      </span>
+      <span class="nav-arrow">›</span>
+    </button>
+    <button class="nav-item active" data-module="colorcard" title="色卡生成器">
+      <span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15l5-4 4 3 3-2 6 5"/><circle cx="8.2" cy="8.2" r="1.3"/></svg></span>
+      <span class="nav-text">
+        <span class="nav-title">色卡生成器</span>
+        <span class="nav-sub">图片取色 · 10 色卡导出</span>
+      </span>
+      <span class="nav-arrow">›</span>
+    </button>
+  </nav>
+
+  <button class="rail-order" id="railOrder" title="自定义工具顺序">
+    <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M4 4v16"/><path d="m2 8 2-4 2 4M2 16l2 4 2-4"/></svg>
+  </button>
+
+  <div class="side-foot">
+    <span class="local-pill"><span class="dot"></span>全部本地运行 · 不联网</span>
+    <span class="ver">v1.2 · 双工具开源版</span>
+  </div>
+</aside>
+
+<main class="stage">
+  <div class="stage-bar">
+    <div class="stage-title">
+      <span class="stage-name" id="stageName">色卡生成器</span>
+      <span class="stage-sep">/</span>
+      <span class="stage-sub" id="stageSub">图片主色 → 10 色卡</span>
+    </div>
+    <div class="stage-tip" id="stageTip">拖入图片 · 生成 · 保存 PNG</div>
+  </div>
+  <div class="frame-wrap">
+    <div class="loading" id="loading"><div class="spin"></div><div>正在载入工具…</div></div>
+    <div class="pane" data-pane="assetnest">
+      <div class="an-state" id="anState">
+        <div class="spin"></div>
+        <div class="an-title" id="anTitle">正在启动素材巢…</div>
+        <div class="an-sub" id="anSub">首次启动约需几秒，之后切换会很快</div>
+        <button class="an-btn" id="anRetry" hidden>重新启动</button>
+      </div>
+      <iframe id="fr-assetnest" title="素材巢"></iframe>
+    </div>
+    <div class="pane active" data-pane="colorcard"><iframe id="fr-colorcard" src="colorcard/index.html" title="色卡生成器"></iframe></div>
+  </div>
+</main>
+
+<div class="order-modal" id="orderModal" hidden>
+  <div class="order-backdrop" id="orderBackdrop"></div>
+  <div class="order-card" role="dialog" aria-modal="true" aria-label="自定义工具顺序">
+    <div class="order-head">
+      <div>
+        <div class="order-title">自定义工具顺序</div>
+        <div class="order-sub">用 ↑ ↓ 调整左侧工具栏的排列，保存后立即生效，下次打开保持。</div>
+      </div>
+      <button class="order-close" id="orderClose" title="关闭">×</button>
+    </div>
+    <div class="order-list" id="orderList"></div>
+    <div class="order-foot">
+      <button class="order-btn" id="orderReset">恢复默认</button>
+      <div class="order-foot-right">
+        <button class="order-btn" id="orderCancel">取消</button>
+        <button class="order-btn primary" id="orderSave">保存顺序</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var modules = {
+    assetnest: { name:'素材巢', sub:'AssetNest · 项目素材资产管理', tip:'剧本 · 人物 · 场景 · 道具 · 音频 · 视频 · 成片' },
+    colorcard: { name:'色卡生成器', sub:'图片主色 → 10 色卡', tip:'拖入图片 · 生成 · 保存 PNG' }
+  };
+  var items = document.querySelectorAll('.nav-item');
+  var panes = document.querySelectorAll('.pane');
+  var sideEl = document.querySelector('.side');
+  var stageName = document.getElementById('stageName');
+  var stageSub = document.getElementById('stageSub');
+  var stageTip = document.getElementById('stageTip');
+  var loading = document.getElementById('loading');
+  var anState = document.getElementById('anState');
+  var anTitle = document.getElementById('anTitle');
+  var anSub = document.getElementById('anSub');
+  var anRetry = document.getElementById('anRetry');
+  var anFrame = document.getElementById('fr-assetnest');
+  var anUrl = '', anStarting = false;
+  var NAV_ORDER_KEY = 'aibox.order';
+  var DEFAULT_ORDER = ['assetnest','colorcard'];
+  var dragKey = null, suppressClick = false;
+  var btnOrder = document.getElementById('btnOrder');
+  var railOrder = document.getElementById('railOrder');
+  var orderModal = document.getElementById('orderModal');
+  var orderBackdrop = document.getElementById('orderBackdrop');
+  var orderList = document.getElementById('orderList');
+
+  function clearDrop(){
+    var bs = document.querySelectorAll('.nav-item');
+    for (var i=0;i<bs.length;i++) bs[i].classList.remove('drop-before','drop-after');
+  }
+  function saveOrder(){
+    try {
+      var arr = [];
+      var bs = document.querySelectorAll('.nav-item');
+      for (var i=0;i<bs.length;i++) arr.push(bs[i].getAttribute('data-module'));
+      localStorage.setItem(NAV_ORDER_KEY, JSON.stringify(arr));
+    } catch(e){}
+  }
+  function applySavedOrder(){
+    var nav = document.querySelector('nav');
+    if (!nav) return;
+    var saved = [];
+    try { saved = JSON.parse(localStorage.getItem(NAV_ORDER_KEY) || '[]'); } catch(e){}
+    if (!Array.isArray(saved)) saved = [];
+    for (var i=0;i<saved.length;i++){
+      var b = document.querySelector('.nav-item[data-module="' + saved[i] + '"]');
+      if (b) nav.appendChild(b);
+    }
+    for (var j=0;j<items.length;j++){
+      if (!nav.contains(items[j])) nav.appendChild(items[j]);
+    }
+  }
+
+  /* ---------- 自定义工具顺序（弹窗） ---------- */
+  function updateOrderRows(){
+    var rows = orderList.querySelectorAll('.order-row');
+    for (var i=0;i<rows.length;i++){
+      rows[i].querySelector('.num').textContent = String(i + 1);
+      rows[i].querySelector('.move[data-dir="up"]').disabled = (i === 0);
+      rows[i].querySelector('.move[data-dir="down"]').disabled = (i === rows.length - 1);
+    }
+  }
+
+  function buildOrderRows(){
+    orderList.innerHTML = '';
+    var bs = document.querySelectorAll('.nav-item');
+    for (var i=0;i<bs.length;i++){
+      (function(b){
+        var row = document.createElement('div');
+        row.className = 'order-row';
+        row.setAttribute('data-key', b.getAttribute('data-module'));
+
+        var grip = document.createElement('span'); grip.className = 'grip'; grip.textContent = '⋮⋮';
+        var num = document.createElement('span'); num.className = 'num';
+        var ico = document.createElement('span'); ico.className = 'ico';
+        ico.innerHTML = b.querySelector('.ico').innerHTML;
+        var info = document.createElement('div'); info.className = 'info';
+        var nm = document.createElement('b'); nm.textContent = b.querySelector('.nav-title').textContent;
+        var sb = document.createElement('small'); sb.textContent = b.querySelector('.nav-sub').textContent;
+        info.appendChild(nm); info.appendChild(sb);
+
+        var up = document.createElement('button');
+        up.type = 'button'; up.className = 'move'; up.setAttribute('data-dir','up');
+        up.title = '上移'; up.textContent = '↑';
+        var down = document.createElement('button');
+        down.type = 'button'; down.className = 'move'; down.setAttribute('data-dir','down');
+        down.title = '下移'; down.textContent = '↓';
+
+        row.appendChild(grip); row.appendChild(num); row.appendChild(ico);
+        row.appendChild(info); row.appendChild(up); row.appendChild(down);
+        orderList.appendChild(row);
+      })(bs[i]);
+    }
+    updateOrderRows();
+  }
+
+  function openOrderModal(){
+    buildOrderRows();
+    orderModal.hidden = false;
+    setTimeout(function(){
+      var c = document.getElementById('orderClose');
+      if (c) c.focus();
+    }, 30);
+  }
+  function closeOrderModal(){ orderModal.hidden = true; }
+
+  function commitOrder(){
+    var rows = orderList.querySelectorAll('.order-row');
+    var nav = document.querySelector('nav');
+    for (var i=0;i<rows.length;i++){
+      var key = rows[i].getAttribute('data-key');
+      var b = document.querySelector('.nav-item[data-module="' + key + '"]');
+      if (b) nav.appendChild(b);
+    }
+    saveOrder();
+    closeOrderModal();
+  }
+
+  function resetOrder(){
+    for (var i=0;i<DEFAULT_ORDER.length;i++){
+      var r = orderList.querySelector('.order-row[data-key="' + DEFAULT_ORDER[i] + '"]');
+      if (r) orderList.appendChild(r);
+    }
+    updateOrderRows();
+  }
+
+  if (btnOrder) btnOrder.addEventListener('click', openOrderModal);
+  if (railOrder) railOrder.addEventListener('click', openOrderModal);
+  document.getElementById('orderClose').addEventListener('click', closeOrderModal);
+  document.getElementById('orderCancel').addEventListener('click', closeOrderModal);
+  document.getElementById('orderSave').addEventListener('click', commitOrder);
+  document.getElementById('orderReset').addEventListener('click', resetOrder);
+  orderBackdrop.addEventListener('click', closeOrderModal);
+  orderList.addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('.move') : null;
+    if (!btn) return;
+    var row = btn.closest('.order-row');
+    if (!row) return;
+    var dir = btn.getAttribute('data-dir');
+    if (dir === 'up' && row.previousElementSibling) {
+      orderList.insertBefore(row, row.previousElementSibling);
+    } else if (dir === 'down' && row.nextElementSibling) {
+      orderList.insertBefore(row.nextElementSibling, row);
+    }
+    updateOrderRows();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && orderModal && !orderModal.hidden) closeOrderModal();
+  });
+
+  function anShow(title, sub, retry){
+    anTitle.textContent = title;
+    anSub.textContent = sub || '';
+    anRetry.hidden = !retry;
+    anState.classList.remove('hide');
+  }
+  function anHide(){ anState.classList.add('hide'); }
+  function anActive(){
+    var p = document.querySelector('.pane.active');
+    return !!p && p.getAttribute('data-pane') === 'assetnest';
+  }
+  function ensureAssetNest(){
+    if (anUrl) {
+      if (anFrame.getAttribute('src') !== anUrl) anFrame.src = anUrl;
+      anHide();
+      return;
+    }
+    if (!(window.chrome && window.chrome.webview)) {
+      anShow('素材巢需要在桌面应用中运行', '请使用 AI 创作工具箱.exe 打开，浏览器预览模式不启动本地服务。', false);
+      return;
+    }
+    if (anStarting) {
+      anShow('正在启动素材巢…', '首次启动约需几秒，之后切换会很快', false);
+      return;
+    }
+    anStarting = true;
+    anShow('正在启动素材巢…', '首次启动约需几秒，之后切换会很快', false);
+    window.chrome.webview.postMessage(JSON.stringify({ cmd: 'assetnest-start' }));
+  }
+
+  function activate(key, save){
+    if (!modules[key]) key = 'colorcard';
+    for (var i=0;i<items.length;i++) items[i].classList.toggle('active', items[i].getAttribute('data-module') === key);
+    for (var j=0;j<panes.length;j++) panes[j].classList.toggle('active', panes[j].getAttribute('data-pane') === key);
+    sideEl.classList.toggle('rail', key === 'assetnest');
+    stageName.textContent = modules[key].name;
+    stageSub.textContent = modules[key].sub;
+    stageTip.textContent = modules[key].tip;
+    if (save) { try { localStorage.setItem('aibox.module', key); } catch(e){} }
+    if (key === 'assetnest') ensureAssetNest();
+  }
+
+  if (anFrame) {
+    anFrame.addEventListener('load', function(){
+      if (anUrl && anFrame.getAttribute('src') === anUrl && anActive()) anHide();
+    });
+  }
+  anRetry.addEventListener('click', function(){
+    anUrl = ''; anStarting = false;
+    anFrame.src = 'about:blank';
+    ensureAssetNest();
+  });
+
+  if (window.chrome && window.chrome.webview) {
+    window.chrome.webview.addEventListener('message', function(e){
+      var d = e.data;
+      if (!d || !d.type) return;
+      if (d.type === 'assetnest-starting') {
+        anStarting = true;
+        if (anActive()) anShow('正在启动素材巢…', '首次启动约需几秒，之后切换会很快', false);
+      } else if (d.type === 'assetnest-ready') {
+        anStarting = false;
+        anUrl = d.url;
+        anShow('正在载入素材巢…', '本地服务已启动', false);
+        anFrame.src = d.url;
+      } else if (d.type === 'assetnest-error') {
+        anStarting = false;
+        anUrl = '';
+        if (anActive()) anShow('素材巢启动失败', d.message || '请重试', true);
+      } else if (d.type === 'assetnest-stopped') {
+        anStarting = false;
+        anUrl = '';
+        anFrame.src = 'about:blank';
+        if (anActive()) anShow('素材巢已退出', '点击下方按钮可重新启动本地服务。', true);
+      }
+    });
+  }
+
+  for (var i=0;i<items.length;i++){
+    (function(btn){
+      btn.setAttribute('draggable', 'true');
+      btn.addEventListener('click', function(){
+        if (suppressClick) return;
+        activate(btn.getAttribute('data-module'), true);
+      });
+      btn.addEventListener('dragstart', function(e){
+        dragKey = btn.getAttribute('data-module');
+        suppressClick = true;
+        btn.classList.add('dragging');
+        try {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', dragKey);
+        } catch (err) {}
+      });
+      btn.addEventListener('dragend', function(){
+        btn.classList.remove('dragging');
+        clearDrop();
+        dragKey = null;
+        setTimeout(function(){ suppressClick = false; }, 250);
+      });
+      btn.addEventListener('dragover', function(e){
+        if (!dragKey || dragKey === btn.getAttribute('data-module')) return;
+        e.preventDefault();
+        var r = btn.getBoundingClientRect();
+        var after = (e.clientY - r.top) > r.height / 2;
+        clearDrop();
+        btn.classList.add(after ? 'drop-after' : 'drop-before');
+        try { e.dataTransfer.dropEffect = 'move'; } catch (err) {}
+      });
+      btn.addEventListener('dragleave', function(){
+        btn.classList.remove('drop-before','drop-after');
+      });
+      btn.addEventListener('drop', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var key = dragKey || (e.dataTransfer && e.dataTransfer.getData('text/plain'));
+        var target = btn.getAttribute('data-module');
+        if (key && key !== target) {
+          var dragged = document.querySelector('.nav-item[data-module="' + key + '"]');
+          var r = btn.getBoundingClientRect();
+          var after = (e.clientY - r.top) > r.height / 2;
+          if (dragged) {
+            if (after) btn.parentNode.insertBefore(dragged, btn.nextSibling);
+            else btn.parentNode.insertBefore(dragged, btn);
+            saveOrder();
+          }
+        }
+        clearDrop();
+      });
+    })(items[i]);
+  }
+
+  applySavedOrder();
+
+  var saved = 'colorcard';
+  try { saved = localStorage.getItem('aibox.module') || 'colorcard'; } catch(e){}
+  var hashKey = (location.hash || '').replace(/^#/, '');
+  var queryKey = '';
+  try { queryKey = new URLSearchParams(location.search).get('m') || ''; } catch(e){}
+  if (modules[hashKey]) saved = hashKey;
+  if (modules[queryKey]) saved = queryKey;
+  activate(saved, false);
+
+  var pending = 1;
+  function done(){
+    pending--;
+    if (pending <= 0) { loading.classList.add('hide'); setTimeout(function(){ loading.style.display='none'; }, 300); }
+  }
+  ['fr-colorcard'].forEach(function(id){
+    var f = document.getElementById(id);
+    if (!f) { pending--; return; }
+    f.addEventListener('load', done);
+  });
+  setTimeout(function(){ if (loading && loading.style.display !== 'none') { loading.classList.add('hide'); setTimeout(function(){ loading.style.display='none'; }, 300); } }, 4000);
+})();
+</script>
+</body>
+</html>

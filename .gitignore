@@ -1,0 +1,26 @@
+# 构建产物
+dist/
+build/
+modules/assetnest/build/
+modules/assetnest/dist/
+
+# 依赖（由脚本还原 / 构建）
+lib/
+vendor/
+
+# 逆向、截图草稿、临时文件
+_recon/
+_preview/
+*.zip
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+
+# IDE / 系统
+.vs/
+*.user
+*.suo
+Thumbs.db
+.DS_Store
