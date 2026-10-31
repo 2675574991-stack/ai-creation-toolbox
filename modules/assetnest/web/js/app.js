@@ -683,19 +683,27 @@ async function generatePeaks(it) {
 /* ============================ 选择 / 检查器 ============================ */
 function findItem(path) { return S.items.find((i) => i.path === path); }
 
+function autoDockOn() {
+  return !(S.settings.click_dock === 0 || S.settings.click_dock === '0');
+}
 function selectOnly(path) {
   S.sel.clear();
   if (path) S.sel.add(path);
   S.active = path || null;
   paintSelection();
-  if (path) openDock(findItem(path)); else closeDock();
+  if (path) {
+    if (autoDockOn()) openDock(findItem(path));
+    else if (!$('#dock').hidden) closeDock();
+  } else closeDock();
 }
 function toggleSelect(path) {
   if (S.sel.has(path)) S.sel.delete(path); else S.sel.add(path);
   S.active = path;
   paintSelection();
-  if (S.sel.size === 1) openDock(findItem([...S.sel][0]));
-  else if (!S.sel.size) closeDock();
+  if (S.sel.size === 1) {
+    if (autoDockOn()) openDock(findItem([...S.sel][0]));
+    else if (!$('#dock').hidden) closeDock();
+  } else if (!S.sel.size) closeDock();
   else renderDockMulti();
 }
 function paintSelection() {
@@ -947,7 +955,7 @@ async function toggleFav(item) {
   try {
     item.favorite = item.favorite ? 0 : 1;
     await patchItem(item, { favorite: item.favorite });
-    if (S.active === item.path) openDock(item);
+    if (S.active === item.path && !$('#dock').hidden) openDock(item);
     toast(item.favorite ? '已收藏' : '已取消收藏', 'ok', 1400);
   } catch (e) { toast(e.message, 'err'); }
 }
@@ -955,21 +963,21 @@ async function rate(item, n) {
   try {
     item.rating = item.rating === n ? 0 : n;
     await patchItem(item, { rating: item.rating });
-    if (S.active === item.path) openDock(item);
+    if (S.active === item.path && !$('#dock').hidden) openDock(item);
   } catch (e) { toast(e.message, 'err'); }
 }
 async function addTag(item, t) {
   if (!t) return;
   try {
     await patchItem(item, { tags: [...new Set([...(item.tags || []), t])] });
-    if (S.active === item.path) openDock(item);
+    if (S.active === item.path && !$('#dock').hidden) openDock(item);
     toast(`已添加标签「${t}」`, 'ok', 1200);
   } catch (e) { toast(e.message, 'err'); }
 }
 async function removeTag(item, t) {
   try {
     await patchItem(item, { tags: (item.tags || []).filter((x) => x !== t) });
-    if (S.active === item.path) openDock(item);
+    if (S.active === item.path && !$('#dock').hidden) openDock(item);
   } catch (e) { toast(e.message, 'err'); }
 }
 const saveNote = debounce(async (item, v) => {
@@ -1526,6 +1534,8 @@ function settingsDialog() {
       .map(([v, l]) => `<option value="${v}" ${s.sort === v ? 'selected' : ''}>${l}</option>`).join('')}
         </select></div>
       </div>
+      <label class="m-check"><input type="checkbox" id="sClickDock" ${Number(s.click_dock) === 0 ? '' : 'checked'}> 点击素材时自动打开右侧「素材信息」</label>
+      <div class="m-hint" style="margin-top:-2px">关闭后单击素材只选中，不再自动弹出信息面板；需要查看时可按 I 键手动打开。</div>
       <div class="m-field" style="margin-top:10px"><span>FFmpeg 路径（可选，用于视频抽帧；留空自动查找）</span>
         <input id="sFfmpeg" value="${esc(s.ffmpeg || '')}" placeholder="C:\\ffmpeg\\bin\\ffmpeg.exe"></div>
       <div class="m-hint">没有 FFmpeg 时，应用会用浏览器解码视频并抓取首帧，同样能生成封面。</div>
@@ -1540,11 +1550,13 @@ function settingsDialog() {
             tile: Number($('#sTile', m).value) || 220,
             sort: $('#sSort', m).value,
             ffmpeg: $('#sFfmpeg', m).value.trim(),
+            click_dock: $('#sClickDock', m).checked ? 1 : 0,
           };
           const r = await apiPost('/api/settings', body);
           S.settings = r;
           S.tile = body.tile; S.sort = body.sort;
           $('#tileRange').value = S.tile; $('#sort').value = S.sort;
+          if (!body.click_dock) closeDock();
           closeModal();
           rowSigs = [];
           await loadFiles(true);
@@ -1775,6 +1787,7 @@ function onKey(e) {
   if (e.key === 'Enter') { e.preventDefault(); openFile(it); }
   else if (e.key === ' ') { e.preventDefault(); openLightbox(it); }
   else if (e.key === 'f' || e.key === 'F') { toggleFav(it); }
+  else if (e.key === 'i' || e.key === 'I') { e.preventDefault(); openDock(it); }
   else if (e.key === 'F2') { renamePath(it.path, it.name); }
   else if (e.key === 'Delete') { deletePaths(S.sel.size ? [...S.sel] : [it.path]); }
   else if (/^[1-5]$/.test(e.key)) { rate(it, Number(e.key)); }

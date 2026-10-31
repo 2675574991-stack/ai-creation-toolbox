@@ -39,6 +39,7 @@ DEFAULT_SETTINGS = {
     "ffmpeg": "",
     "show_hidden": 0,
     "auto_poster": 1,
+    "click_dock": 1,
 }
 
 
