@@ -9,7 +9,7 @@
 
 ![素材巢](docs/screenshots/assetnest.png)
 
-![色卡生成器](docs/screenshots/colorcard.png)
+![色卡生成器](docs/screenshots/colorcard-app.png)
 
 ## 不包含的模块
 

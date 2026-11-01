@@ -308,7 +308,7 @@ namespace AICreationBox
                         break;
                     case "about":
                         MessageBox.Show(this,
-                            "AI 创作工具箱  v1.2\r\n\r\n" +
+                            "AI 创作工具箱  v1.2.1\r\n\r\n" +
                             "素材巢 · 色卡生成器\r\n" +
                             "两个本地工具合并为一个桌面应用，全部在本机运行，不联网。",
                             "关于 AI 创作工具箱",
