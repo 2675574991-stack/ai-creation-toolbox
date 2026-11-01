@@ -18,7 +18,9 @@
 
 ![素材巢](docs/screenshots/assetnest.png)
 
-![色卡生成器](docs/screenshots/colorcard-app.png)
+![色卡生成器](docs/screenshots/colorcard.png)
+
+> 公开版只展示仓库实际包含的两个工具；H3 提示词医生、提示词框架工作台属于第三方内容，不在本仓库中，也不在这里展示。
 
 ## 不包含的模块
 
