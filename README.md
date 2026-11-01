@@ -1,11 +1,20 @@
 # AI 创作工具箱（开源版）
 
+> **最新版本：v1.2.1** · [下载 Windows 版](https://github.com/2675574991-stack/ai-creation-toolbox/releases/latest) · [更新日志](CHANGELOG.md)
+
 一个 Windows 桌面小工具箱，当前包含两个本地工具：
 
 - **素材巢 AssetNest**：按「剧本 / 人物 / 场景 / 道具 / 音频 / 视频 / 成片」组织一部片子的素材，支持拖放、缩略图、视频首帧、音频波形、提示词与生成参数读取、评分标签备注、外部改动自动同步。
 - **色卡生成器**：从图片提取 10 个主色，生成 1600px 宽的黑底色卡 PNG，可作为 AI 视频参考图。
 
 全部在本机运行，不联网、不上传内容。
+
+## 最新变化（v1.2.1）
+
+- 素材巢新增「点击素材时自动打开右侧素材信息」开关，可在设置中关闭
+- 关闭后单击只选中，不再自动弹出信息面板；按 `I` 可手动打开
+- 评分、收藏、标签等操作只在面板已打开时刷新，不会强行弹出
+- 更新实际界面截图，版本号升至 1.2.1
 
 ![素材巢](docs/screenshots/assetnest.png)
 
@@ -54,7 +63,9 @@ H3 提示词医生、提示词框架工作台属于**第三方内容**，本仓�
 
 ## 下载
 
-到本仓库的 **Releases** 页面下载最新的 `AI-Creation-Toolbox-win64.zip`，解压后双击 `AI创作工具箱.exe`。
+最新版：**v1.2.1** → [下载 AI-Creation-Toolbox-win64.zip](https://github.com/2675574991-stack/ai-creation-toolbox/releases/latest)
+
+解压后双击 `AI创作工具箱.exe`。也可以到本仓库的 **Releases** 页面查看历史版本。
 
 > exe 需要和同目录的 dll、`web`、`vendor` 文件夹一起使用，不能只拷 exe。
 
